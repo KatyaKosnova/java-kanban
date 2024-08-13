@@ -3,10 +3,9 @@ import Task.Task;
 import Task.Epic;
 import Task.Subtask;
 import TaskStatus.TaskStatus;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class TaskManager {
     private Map<Integer, Task> tasks;
@@ -36,6 +35,8 @@ public class TaskManager {
         Epic epic = epics.get(epicId);
         if (epic != null) {
             epic.addSubtask(subtask);
+        } else {
+            throw new IllegalArgumentException("Не удается создать подзадачу: epic с ID " + epicId + "не существует");
         }
 
         return subtask;
@@ -113,10 +114,12 @@ public class TaskManager {
 
     private void updateEpicStatus(Epic epic) {
         List<Subtask> subtasks = epic.getSubtasks();
-        if (subtasks.isEmpty() || subtasks.stream().allMatch(s -> s.getStatus() == TaskStatus.NEW)) {
-            epic.setStatus(TaskStatus.NEW);
-        } else if (subtasks.stream().allMatch(s -> s.getStatus() == TaskStatus.DONE)) {
-            epic.setStatus(TaskStatus.DONE);
+        Set<TaskStatus> uniqueStatuses = subtasks.stream()
+                .map(Subtask::getStatus)
+                .collect(Collectors.toSet());
+
+        if (uniqueStatuses.size() == 1) {
+            epic.setStatus(subtasks.get(0).getStatus());
         } else {
             epic.setStatus(TaskStatus.IN_PROGRESS);
         }

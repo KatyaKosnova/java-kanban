@@ -8,11 +8,10 @@ public class Main {
     public static void main(String[] args) {
         TaskManager taskManager = new TaskManager();
 
-
         Epic epic1 = taskManager.createEpic("Эпик 1", "", TaskStatus.NEW);
         Task task1 = taskManager.createTask("Задача 1", "", TaskStatus.NEW);
-        Subtask subtask1 = taskManager.createSubtask("Подзадача 1", "", TaskStatus.NEW, task1.getId());
-        Subtask subtask2 = taskManager.createSubtask("Подзадача 2", "", TaskStatus.NEW, task1.getId());
+        Subtask subtask1 = taskManager.createSubtask("Подзадача 1", "", TaskStatus.NEW, epic1.getId());
+        Subtask subtask2 = taskManager.createSubtask("Подзадача 2", "", TaskStatus.NEW, epic1.getId());
         Subtask subtask3 = taskManager.createSubtask("Подзадача 3", "", TaskStatus.NEW, epic1.getId());
 
 
