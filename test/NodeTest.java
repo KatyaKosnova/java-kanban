@@ -1,4 +1,4 @@
-package tests;
+package test;
 import taskstatus.TaskStatus;
 import task.Task;
 import taskmanager.Node;
