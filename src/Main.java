@@ -1,9 +1,9 @@
-import Task.Task;
-import TaskStatus.TaskStatus;
+import task.Task;
+import taskstatus.TaskStatus;
 import taskmanager.Managers;
 import taskmanager.TaskManager;
-import Task.Epic;
-import Task.Subtask;
+import task.Epic;
+import task.Subtask;
 import java.util.Scanner;
 
 public class Main {

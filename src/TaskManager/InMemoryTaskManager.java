@@ -1,9 +1,9 @@
-package TaskManager;
+package taskmanager;
 
-import Task.Task;
-import Task.Epic;
-import Task.Subtask;
-import TaskStatus.TaskStatus;
+import task.Task;
+import task.Epic;
+import task.Subtask;
+import taskstatus.TaskStatus;
 import java.util.*;
 import java.util.stream.Collectors;
 

@@ -1,6 +1,6 @@
-package TaskManager;
+package taskmanager;
 
-import Task.Task;
+import task.Task;
 import java.util.List;
 
 public interface HistoryManager {
