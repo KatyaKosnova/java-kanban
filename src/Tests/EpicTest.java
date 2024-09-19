@@ -3,8 +3,8 @@ package Tests;
 import Task.Epic;
 import Task.Subtask;
 import TaskStatus.TaskStatus;
-import TaskManager.TaskManager;
-import TaskManager.Managers;
+import taskmanager.TaskManager;
+import taskmanager.Managers;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

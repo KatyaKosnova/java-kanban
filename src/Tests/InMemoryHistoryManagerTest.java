@@ -2,8 +2,8 @@ package Tests;
 
 import Task.Task;
 import TaskStatus.TaskStatus;
-import TaskManager.InMemoryHistoryManager;
-import TaskManager.HistoryManager;
+import taskmanager.InMemoryHistoryManager;
+import taskmanager.HistoryManager;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
