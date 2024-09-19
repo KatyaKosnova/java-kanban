@@ -1,40 +1,95 @@
-import Task.Epic;
-import Task.Subtask;
-import TaskStatus.TaskStatus;
 import Task.Task;
-import TaskManager.InMemoryTaskManager;
+import TaskStatus.TaskStatus;
 import TaskManager.Managers;
 import TaskManager.TaskManager;
-public class Main {
+import Task.Epic;
+import Task.Subtask;
+import java.util.Scanner;
 
+public class Main {
     public static void main(String[] args) {
-        // Создаем менеджер задач через класс Managers
+        Scanner scanner = new Scanner(System.in);
         TaskManager taskManager = Managers.getDefault();
 
-        // Создаем несколько задач разного типа
-        Task task1 = taskManager.createTask("Задача 1", "", TaskStatus.NEW);
-        Task task2 = taskManager.createTask("Задача 2", "", TaskStatus.IN_PROGRESS);
+        while (true) {
+            System.out.println("Выберите действие:");
+            System.out.println("1. Создать задачу");
+            System.out.println("2. Создать подзадачу");
+            System.out.println("3. Создать эпик");
+            System.out.println("4. Показать все задачи");
+            System.out.println("5. Показать историю");
+            System.out.println("6. Выход");
 
-        Epic epic1 = taskManager.createEpic("Эпик 1", "", TaskStatus.NEW);
-        Subtask subtask1 = taskManager.createSubtask("Подзадача 1", "", TaskStatus.NEW, epic1.getId());
+            int action = scanner.nextInt();
+            scanner.nextLine();  // Consume newline
 
-        Epic epic2 = taskManager.createEpic("Эпик 2", "", TaskStatus.NEW);
-        Subtask subtask2 = taskManager.createSubtask("Подзадача 2", "", TaskStatus.IN_PROGRESS, epic2.getId());
-        Subtask subtask3 = taskManager.createSubtask("Подзадача 3", "", TaskStatus.DONE, epic2.getId());
+            switch (action) {
+                case 1:
+                    System.out.println("Введите название задачи:");
+                    String taskName = scanner.nextLine();
+                    System.out.println("Введите описание задачи:");
+                    String taskDescription = scanner.nextLine();
+                    System.out.println("Введите статус задачи (NEW, IN_PROGRESS, DONE):");
+                    String taskStatusStr = scanner.nextLine();
+                    TaskStatus taskStatus = TaskStatus.valueOf(taskStatusStr);
+                    Task task = taskManager.createTask(taskName, taskDescription, taskStatus);
+                    System.out.println("Задача создана: " + task);
+                    break;
 
-        // Вызов различных методов интерфейса TaskManager
-        taskManager.getTask(task1.getId());
-        taskManager.getEpic(epic1.getId());
-        taskManager.getSubtask(subtask1.getId());
-        taskManager.getEpic(epic2.getId());
-        taskManager.getSubtask(subtask2.getId());
-        taskManager.getTask(task2.getId());
+                case 2:
+                    System.out.println("Введите название подзадачи:");
+                    String subtaskName = scanner.nextLine();
+                    System.out.println("Введите описание подзадачи:");
+                    String subtaskDescription = scanner.nextLine();
+                    System.out.println("Введите статус подзадачи (NEW, IN_PROGRESS, DONE):");
+                    String subtaskStatusStr = scanner.nextLine();
+                    TaskStatus subtaskStatus = TaskStatus.valueOf(subtaskStatusStr);
+                    System.out.println("Введите ID эпика:");
+                    int epicId = scanner.nextInt();
+                    scanner.nextLine();  // Consume newline
+                    try {
+                        Subtask subtask = taskManager.createSubtask(subtaskName, subtaskDescription, subtaskStatus, epicId);
+                        System.out.println("Подзадача создана: " + subtask);
+                    } catch (IllegalArgumentException e) {
+                        System.out.println(e.getMessage());
+                    }
+                    break;
 
-        // Печать всех задач и истории просмотров
-        printAllTasks(taskManager);
+                case 3:
+                    System.out.println("Введите название эпика:");
+                    String epicName = scanner.nextLine();
+                    System.out.println("Введите описание эпика:");
+                    String epicDescription = scanner.nextLine();
+                    System.out.println("Введите статус эпика (NEW, IN_PROGRESS, DONE):");
+                    String epicStatusStr = scanner.nextLine();
+                    TaskStatus epicStatus = TaskStatus.valueOf(epicStatusStr);
+                    Epic epic = taskManager.createEpic(epicName, epicDescription, epicStatus);
+                    System.out.println("Эпик создан: " + epic);
+                    break;
+
+                case 4:
+                    printAllTasks(taskManager);
+                    break;
+
+                case 5:
+                    System.out.println("История:");
+                    for (Task t : taskManager.getHistory()) {
+                        System.out.println(t);
+                    }
+                    break;
+
+                case 6:
+                    System.out.println("Выход из программы.");
+                    scanner.close();
+                    return;
+
+                default:
+                    System.out.println("Неверный выбор. Попробуйте снова.");
+                    break;
+            }
+        }
     }
 
-    // Метод для печати всех задач, эпиков, подзадач и истории просмотров
     private static void printAllTasks(TaskManager manager) {
         System.out.println("Задачи:");
         for (Task task : manager.getAllTasks()) {
@@ -53,11 +108,6 @@ public class Main {
         System.out.println("Подзадачи:");
         for (Subtask subtask : manager.getAllSubtasks()) {
             System.out.println(subtask);
-        }
-
-        System.out.println("История:");
-        for (Task task : manager.getHistory()) {
-            System.out.println(task);
         }
     }
 }
