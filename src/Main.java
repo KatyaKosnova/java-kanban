@@ -7,7 +7,9 @@ import task.Subtask;
 import java.util.Scanner;
 
 public class Main {
+
     public static void main(String[] args) {
+
         Scanner scanner = new Scanner(System.in);
         TaskManager taskManager = Managers.getDefault();
 
@@ -91,6 +93,7 @@ public class Main {
     }
 
     private static void printAllTasks(TaskManager manager) {
+
         System.out.println("Задачи:");
         for (Task task : manager.getAllTasks()) {
             System.out.println(task);

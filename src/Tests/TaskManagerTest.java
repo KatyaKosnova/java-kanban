@@ -13,6 +13,7 @@ public class TaskManagerTest {
 
     @Test
     void addNewTask() {
+
         TaskManager taskManager = Managers.getDefault();
 
         // Создание задачи

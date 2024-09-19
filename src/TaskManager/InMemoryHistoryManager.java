@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public class InMemoryHistoryManager implements HistoryManager {
+
     private static final int MAX_HISTORY_SIZE = 10;
     private final Map<Integer, Node> nodeMap = new HashMap<>();
     private Node head;
@@ -14,10 +15,12 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
+
         int taskId = task.getId();
 
         // Если задача уже в истории, удаляем старый узел
         if (nodeMap.containsKey(taskId)) {
+
             removeNode(nodeMap.get(taskId));
         }
 
@@ -26,12 +29,14 @@ public class InMemoryHistoryManager implements HistoryManager {
 
         // Если история превышает допустимый размер, удаляем старый узел
         if (nodeMap.size() > MAX_HISTORY_SIZE) {
+
             removeOldest();
         }
     }
 
     @Override
     public List<Task> getHistory() {
+
         List<Task> history = new ArrayList<>();
         Node current = head;
         while (current != null) {
@@ -43,6 +48,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
+
         if (nodeMap.containsKey(id)) {
             removeNode(nodeMap.get(id));
         }
@@ -50,6 +56,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     // Добавление узла в конец списка
     private void linkLast(Task task) {
+
         Node newNode = new Node(task);
         nodeMap.put(task.getId(), newNode);
 
@@ -64,6 +71,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     // Удаление узла
     private void removeNode(Node node) {
+
         if (node == null) return;
 
         nodeMap.remove(node.getTask().getId()); // Используем геттер для получения ID задачи
@@ -83,6 +91,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     // Удаление самого старого узла (глава списка)
     private void removeOldest() {
+
         if (head != null) {
             removeNode(head);
         }

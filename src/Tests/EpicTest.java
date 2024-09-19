@@ -13,6 +13,7 @@ public class EpicTest {
 
     @Test
     void shouldNotAddSelfAsSubtask() {
+
         TaskManager taskManager = Managers.getDefault();
 
         // Создаем эпик
@@ -27,6 +28,7 @@ public class EpicTest {
 
     @Test
     void shouldNotAssignSubtaskAsEpic() {
+
         TaskManager taskManager = Managers.getDefault();
 
         // Создаем эпик

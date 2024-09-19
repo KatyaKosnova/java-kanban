@@ -41,6 +41,7 @@ class InMemoryTaskManagerTest {
     }
     @Test
     void shouldNotConflictWithGeneratedIds() {
+
         TaskManager taskManager = Managers.getDefault();
         Task task1 = taskManager.createTask("Task 1", "Description 1", TaskStatus.NEW);
         Task task2 = taskManager.createTask("Task 2", "Description 2", TaskStatus.NEW);
@@ -50,6 +51,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldNotChangeTaskFieldsAfterAdding() {
+
         TaskManager taskManager = Managers.getDefault();
         Task task = taskManager.createTask("Task", "Description", TaskStatus.NEW);
         int id = task.getId();
@@ -64,6 +66,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldSavePreviousVersionInHistoryManager() {
+
         HistoryManager historyManager = Managers.getDefaultHistory();
         TaskManager taskManager = Managers.getDefault();
         Task task = taskManager.createTask("Task", "Description", TaskStatus.NEW);

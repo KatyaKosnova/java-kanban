@@ -12,6 +12,7 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void addAndRemoveTask() {
+
         HistoryManager historyManager = new InMemoryHistoryManager();
         Task task = new Task(1, "Test Task", "Description", TaskStatus.NEW);
         historyManager.add(task);
@@ -26,6 +27,7 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void shouldLimitHistorySize() {
+
         HistoryManager historyManager = new InMemoryHistoryManager();
 
         for (int i = 0; i < 15; i++) {
