@@ -1,7 +1,7 @@
 package Tests;
 
-import Task.Task;
-import TaskStatus.TaskStatus;
+import task.Task;
+import taskstatus.TaskStatus;
 import taskmanager.Managers;
 import taskmanager.TaskManager;
 

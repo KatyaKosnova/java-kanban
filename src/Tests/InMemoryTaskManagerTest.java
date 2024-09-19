@@ -1,7 +1,7 @@
 package Tests;
 
-import TaskStatus.TaskStatus;
-import Task.*;
+import taskstatus.TaskStatus;
+import task.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;

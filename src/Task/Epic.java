@@ -1,5 +1,5 @@
-package Task;
-import TaskStatus.TaskStatus;
+package task;
+import taskstatus.TaskStatus;
 import java.util.ArrayList;
 import java.util.List;
 

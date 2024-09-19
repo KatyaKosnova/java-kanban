@@ -1,8 +1,8 @@
 package Tests;
 
-import Task.Epic;
-import Task.Subtask;
-import TaskStatus.TaskStatus;
+import task.Epic;
+import task.Subtask;
+import taskstatus.TaskStatus;
 import taskmanager.TaskManager;
 import taskmanager.Managers;
 import org.junit.jupiter.api.Test;
