@@ -1,4 +1,4 @@
-package Tests;
+package tests;
 
 import task.Epic;
 import task.Subtask;
