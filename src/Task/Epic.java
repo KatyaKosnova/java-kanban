@@ -20,23 +20,28 @@ public class Epic extends Task {
 
     // Добавление подзадачи
     public void addSubtask(Subtask subtask) {
-        if (subtask.getEpicId() == this.id) {
-            throw new IllegalArgumentException("Эпик не может быть подзадачей самого себя.");
+        if (subtask.getEpicId() != this.id) {
+            throw new IllegalArgumentException("Подзадача должна принадлежать эпика.");
         }
         subtasks.add(subtask);
         updateEpicStatus();
     }
 
 
-
     // Удаление подзадачи
     public void removeSubtask(Subtask subtask) {
+        if (subtask.getEpicId() != this.id) {
+            throw new IllegalArgumentException("Подзадача должна принадлежать эпика.");
+        }
         subtasks.remove(subtask);
         updateEpicStatus();  // Обновляем статус эпика при удалении подзадачи
     }
 
     // Обновление подзадачи
     public void updateSubtask(Subtask subtask) {
+        if (subtask.getEpicId() != this.id) {
+            throw new IllegalArgumentException("Подзадача должна принадлежать эпика.");
+        }
         for (int i = 0; i < subtasks.size(); i++) {
             if (subtasks.get(i).getId() == subtask.getId()) {
                 subtasks.set(i, subtask);
@@ -58,20 +63,20 @@ public class Epic extends Task {
             return;
         }
 
-        boolean hasNew = false;
-        boolean hasDone = false;
+        int newCount = 0;
+        int doneCount = 0;
 
         for (Subtask subtask : subtasks) {
             if (subtask.getStatus() == TaskStatus.NEW) {
-                hasNew = true;
+                newCount++;
             } else if (subtask.getStatus() == TaskStatus.DONE) {
-                hasDone = true;
+                doneCount++;
             }
         }
 
-        if (hasNew && !hasDone) {
+        if (newCount > 0 && doneCount == 0) {
             this.status = TaskStatus.IN_PROGRESS;
-        } else if (hasDone && !hasNew) {
+        } else if (doneCount == subtasks.size()) {
             this.status = TaskStatus.DONE;
         } else {
             this.status = TaskStatus.IN_PROGRESS; // Mixed statuses

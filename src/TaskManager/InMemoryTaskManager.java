@@ -31,24 +31,25 @@ public class InMemoryTaskManager implements TaskManager {
         return task;
     }
 
-    @Override
     public Subtask createSubtask(String name, String description, TaskStatus status, int epicId) {
-        if (!epics.containsKey(epicId)) {
-            throw new IllegalArgumentException("Epic with ID " + epicId + " does not exist.");
+        // Получаем следующий уникальный ID для подзадачи
+        int subtaskId = currentId++;
+
+        // Проверяем, существует ли эпик
+        Epic epic = getEpic(epicId);
+        if (epic == null) {
+            throw new IllegalArgumentException("Эпик не найден.");
         }
 
-        // Проверка на добавление самого себя как подзадачи
-        if (epicId == currentId) {
-            throw new IllegalArgumentException("Эпик не может быть подзадачей самого себя.");
-        }
+        // Создаем подзадачу
+        Subtask subtask = new Subtask(subtaskId, name, description, status, epicId);
 
-        Subtask subtask = new Subtask(currentId, name, description, status, epicId);
-        subtasks.put(currentId, subtask);
+        // Добавляем подзадачу в эпик
+        epic.addSubtask(subtask);
 
-        Epic epic = epics.get(epicId);
-        epic.addSubtask(subtask); // Убедись, что этот метод корректно работает
+        // Сохраняем подзадачу в менеджере
+        subtasks.put(subtaskId, subtask);
 
-        currentId++;
         return subtask;
     }
 
@@ -87,7 +88,6 @@ public class InMemoryTaskManager implements TaskManager {
         return epic;
     }
 
-    // Новый метод для получения эпика по ID
     @Override
     public Epic getEpicById(int id) {
         return epics.get(id);
@@ -95,11 +95,17 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateTask(Task task) {
+        if (!tasks.containsKey(task.getId())) {
+            throw new IllegalArgumentException("Задача с ID " + task.getId() + " не найдена.");
+        }
         tasks.put(task.getId(), task);
     }
 
     @Override
     public void updateSubtask(Subtask subtask) {
+        if (!subtasks.containsKey(subtask.getId())) {
+            throw new IllegalArgumentException("Подзадача с ID " + subtask.getId() + " не найдена.");
+        }
         subtasks.put(subtask.getId(), subtask);
         Epic epic = epics.get(subtask.getEpicId());
         if (epic != null) {
@@ -176,7 +182,7 @@ public class InMemoryTaskManager implements TaskManager {
     private void updateEpicStatus(Epic epic) {
         List<Subtask> subtasks = epic.getSubtasks();
         if (subtasks.isEmpty()) {
-            epic.setStatus(TaskStatus.NEW); // Если подзадач нет, статус NEW
+            epic.setStatus(TaskStatus.NEW);
             return;
         }
 
