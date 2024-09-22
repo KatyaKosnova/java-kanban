@@ -5,10 +5,10 @@ import java.util.Objects;
 
 public class Task {
 
-    private int id;
-    private String name;
-    private String description;
-    private TaskStatus status;
+    public int id;
+    public String name;
+    public String description;
+    public TaskStatus status;
 
     public Task(int id, String name, String description, TaskStatus status) {
 

@@ -2,18 +2,26 @@ package test;
 
 import task.Task;
 import taskstatus.TaskStatus;
-import taskmanager.InMemoryHistoryManager;
 import taskmanager.HistoryManager;
+import taskmanager.InMemoryHistoryManager;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryHistoryManagerTest {
 
+    private HistoryManager historyManager;
+
+    @BeforeEach
+    void setUp() {
+        historyManager = new InMemoryHistoryManager();
+    }
+
     @Test
     void addAndRemoveTask() {
-
-        HistoryManager historyManager = new InMemoryHistoryManager();
         Task task = new Task(1, "Test Task", "Description", TaskStatus.NEW);
         historyManager.add(task);
 
@@ -22,14 +30,11 @@ class InMemoryHistoryManagerTest {
 
         historyManager.remove(task.getId());
         history = historyManager.getHistory();
-        assertTrue(history.isEmpty(), "История должна быть пустой.");
+        assertTrue(history.isEmpty(), "История должна быть пустой после удаления задачи.");
     }
 
     @Test
     void shouldLimitHistorySize() {
-
-        HistoryManager historyManager = new InMemoryHistoryManager();
-
         for (int i = 0; i < 15; i++) {
             Task task = new Task(i, "Task " + i, "Description " + i, TaskStatus.NEW);
             historyManager.add(task);

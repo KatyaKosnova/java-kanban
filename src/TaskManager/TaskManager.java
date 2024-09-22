@@ -19,7 +19,10 @@ public interface TaskManager {
 
     Subtask getSubtask(int id);
 
-    Epic getEpic(int id);
+    Epic getEpic(int id); // Существующий метод
+
+    // Новый метод для получения эпика по ID
+    Epic getEpicById(int id);
 
     void updateTask(Task task);
 
