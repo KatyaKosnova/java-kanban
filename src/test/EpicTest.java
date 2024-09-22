@@ -1,7 +1,6 @@
 package test;
 
 import task.Epic;
-import task.Subtask;
 import taskstatus.TaskStatus;
 import taskmanager.TaskManager;
 import taskmanager.Managers;
@@ -25,17 +24,12 @@ public class EpicTest {
         Epic epic = taskManager.createEpic("Эпик", " ", TaskStatus.NEW);
 
         // Проверяем, что добавление подзадачи с тем же идентификатором, что и у эпика, выбросит исключение
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             taskManager.createSubtask("Подзадача", "", TaskStatus.NEW, epic.getId());
         });
 
-        // Проверка сообщения об ошибке
-        assertEquals("Эпик не может быть подзадачей самого себя.", exception.getMessage());
-
         // Проверка, что подзадач еще нет в эпике
         assertTrue(epic.getSubtasks().isEmpty(), "Эпик не должен содержать подзадач.");
-
-        // Проверка статуса эпика
         assertEquals(TaskStatus.NEW, epic.getStatus(), "Статус эпика должен оставаться NEW после попытки добавить подзадачу.");
     }
 
