@@ -56,6 +56,12 @@ public class Epic extends Task {
         this.description = description;
     }
 
+    @Override
+    public TaskType getType() {
+        return TaskType.EPIC;
+    }
+
+
     // Метод для обновления статуса эпика в зависимости от статусов подзадач
     private void updateEpicStatus() {
         if (subtasks.isEmpty()) {

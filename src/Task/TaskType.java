@@ -1,10 +1,9 @@
-package taskstatus;
+package task;
 
-public enum TaskStatus {
-
-    NEW,
-    IN_PROGRESS,
-    DONE;
+public enum TaskType {
+    TASK,
+    EPIC,
+    SUBTASK;
 
     @Override
     public String toString() {
