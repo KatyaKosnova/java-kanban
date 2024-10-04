@@ -137,6 +137,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         historyManager.add(task); // Обновляем задачу в истории
         save();
     }
+
     @Override
     public void updateSubtask(Subtask subtask) {
         try {
