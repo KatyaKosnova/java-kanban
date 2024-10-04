@@ -41,6 +41,11 @@ public class InMemoryTaskManager implements TaskManager {
             throw new IllegalArgumentException("Эпик не найден.");
         }
 
+        // Проверка на добавление подзадачи к самому себе
+        if (epicId == subtaskId) {
+            throw new IllegalArgumentException("Эпик не может быть подзадачей самого себя.");
+        }
+
         // Создаем подзадачу
         Subtask subtask = new Subtask(subtaskId, name, description, status, epicId);
 
