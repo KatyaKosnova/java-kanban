@@ -101,7 +101,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 }
             }
         } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка при загрузке из файла", e);
+            throw new ManagerSaveException("Ошибка при загрузке из файла", e); // Используем новое исключение
         }
         return manager;
     }
@@ -137,12 +137,16 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         historyManager.add(task); // Обновляем задачу в истории
         save();
     }
-
     @Override
     public void updateSubtask(Subtask subtask) {
-        super.updateSubtask(subtask);
-        historyManager.add(subtask); // Обновляем подзадачу в истории
-        save();
+        try {
+            super.updateSubtask(subtask); // Попытка обновить подзадачу
+            historyManager.add(subtask); // Обновляем подзадачу в истории
+            save();
+        } catch (TaskNotFoundException e) {
+            System.out.println("Ошибка: подзадача не найдена.");
+            e.printStackTrace();
+        }
     }
 
     @Override

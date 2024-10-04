@@ -23,35 +23,20 @@ public class EpicTest {
         // Создаем эпик
         Epic epic = taskManager.createEpic("Эпик", " ", TaskStatus.NEW);
 
-        // Переменная для хранения результата добавления подзадачи
-        boolean isExceptionThrown = false;
-
-        try {
+        // Проверяем, что выбрасывается исключение при добавлении подзадачи с тем же идентификатором, что и у эпика
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
             // Попытка добавить подзадачу с тем же идентификатором, что и у эпика
             taskManager.createSubtask("Подзадача", "", TaskStatus.NEW, epic.getId());
-        } catch (IllegalArgumentException e) {
-            // Если выбрасывается исключение, устанавливаем флаг
-            isExceptionThrown = true;
-            // Проверяем сообщение об ошибке
-            if (!e.getMessage().equals("Эпик не может быть подзадачей самого себя.")) {
-                System.out.println("Ошибка: " + e.getMessage());
-            }
-        }
+        });
 
-        // Проверяем состояние после попытки добавления
-        if (!isExceptionThrown) {
-            System.out.println("Ошибка: исключение не было выброшено.");
-        }
+        // Проверяем сообщение об ошибке
+        assertEquals("Эпик не может быть подзадачей самого себя.", exception.getMessage());
 
-        // Проверка, что подзадач нет в эпике
-        if (!epic.getSubtasks().isEmpty()) {
-            System.out.println("Ошибка: эпик содержит подзадачи.");
-        }
+        // Проверяем, что подзадачи не добавлены
+        assertTrue(epic.getSubtasks().isEmpty(), "Эпик не должен содержать подзадач.");
 
-        // Проверка статуса эпика
-        if (epic.getStatus() != TaskStatus.NEW) {
-            System.out.println("Ошибка: статус эпика не равен NEW.");
-        }
+        // Проверяем, что статус эпика остался NEW
+        assertEquals(TaskStatus.NEW, epic.getStatus(), "Статус эпика должен оставаться NEW.");
     }
 
     @Test

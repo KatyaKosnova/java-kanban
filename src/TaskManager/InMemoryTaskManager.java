@@ -102,9 +102,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateSubtask(Subtask subtask) {
+    public void updateSubtask(Subtask subtask) throws TaskNotFoundException {
         if (!subtasks.containsKey(subtask.getId())) {
-            throw new IllegalArgumentException("Подзадача с ID " + subtask.getId() + " не найдена.");
+            throw new TaskNotFoundException("Подзадача с ID " + subtask.getId() + " не найдена.");
         }
         subtasks.put(subtask.getId(), subtask);
         Epic epic = epics.get(subtask.getEpicId());

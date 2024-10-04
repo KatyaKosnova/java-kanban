@@ -26,7 +26,7 @@ public interface TaskManager {
 
     void updateTask(Task task);
 
-    void updateSubtask(Subtask subtask);
+    void updateSubtask(Subtask subtask) throws TaskNotFoundException;
 
     void updateEpic(Epic epic);
 
