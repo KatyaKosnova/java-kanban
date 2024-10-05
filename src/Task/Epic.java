@@ -1,5 +1,6 @@
 package task;
 
+import exception.InvalidSubtaskException;
 import taskstatus.TaskStatus;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +19,10 @@ public class Epic extends Task {
         return subtasks;
     }
 
-    // Добавление подзадачи
-    public void addSubtask(Subtask subtask) {
+    public void addSubtask(Subtask subtask) throws InvalidSubtaskException {
         if (subtask.getEpicId() != this.id) {
-            throw new IllegalArgumentException("Подзадача должна принадлежать эпика.");
+            throw new InvalidSubtaskException("Подзадача должна принадлежать эпика.");
         }
-        subtasks.add(subtask);
-        updateEpicStatus();
     }
 
 

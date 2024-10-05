@@ -1,5 +1,6 @@
 package taskmanager;
 
+import exception.InvalidSubtaskException;
 import task.Task;
 import task.Epic;
 import task.Subtask;
@@ -32,7 +33,6 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public Subtask createSubtask(String name, String description, TaskStatus status, int epicId) {
-        // Получаем следующий уникальный ID для подзадачи
         int subtaskId = currentId++;
 
         // Проверяем, существует ли эпик
@@ -49,8 +49,13 @@ public class InMemoryTaskManager implements TaskManager {
         // Создаем подзадачу
         Subtask subtask = new Subtask(subtaskId, name, description, status, epicId);
 
-        // Добавляем подзадачу в эпик
-        epic.addSubtask(subtask);
+        // Обрабатываем InvalidSubtaskException
+        try {
+            epic.addSubtask(subtask);
+        } catch (InvalidSubtaskException e) {
+            System.out.println("Ошибка добавления подзадачи: " + e.getMessage());
+            return null; // Или выполните другое действие, если необходимо
+        }
 
         // Сохраняем подзадачу в менеджере
         subtasks.put(subtaskId, subtask);

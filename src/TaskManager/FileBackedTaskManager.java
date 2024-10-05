@@ -15,12 +15,12 @@ import java.util.List;
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public final File file;
-    private final InMemoryHistoryManager historyManager;
+    private final HistoryManager historyManager;
 
     public FileBackedTaskManager(File file) {
         super(); // Вызов конструктора родительского класса
         this.file = file;
-        this.historyManager = new InMemoryHistoryManager(); // Инициализация менеджера истории
+        this.historyManager = Managers.getDefaultHistory(); // Используем метод из Managers для инициализации
     }
 
     // Метод для автосохранения в файл
