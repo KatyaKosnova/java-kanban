@@ -144,11 +144,11 @@ public class Epic extends Task {
     }
 
     public void addSubtask(Subtask subtask) throws InvalidSubtaskException {
-        // Ваша логика проверки
+
         if (subtask.getEpicId() != this.getId()) {
-            throw new InvalidSubtaskException("Подзадача принадлежит другому эпика.");
+            throw new InvalidSubtaskException("Подзадача должна принадлежать эпика."); // Изменено
         }
-        // Добавление подзадачи в список подзадач
+
         subtasks.add(subtask); // Используем add вместо put
     }
 }
