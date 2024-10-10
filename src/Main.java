@@ -3,6 +3,10 @@ import taskmanager.FileBackedTaskManager;
 import taskstatus.TaskStatus;
 
 import java.io.File;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -14,6 +18,7 @@ public class Main {
     public static void main(String[] args) {
         try (Scanner scanner = new Scanner(System.in)) {
             File file = File.createTempFile("taskManager", ".csv");
+            file.deleteOnExit(); // Удаляем файл при завершении программы
             FileBackedTaskManager manager = FileBackedTaskManager.loadFromFile(file);
 
             while (true) {
@@ -52,9 +57,34 @@ public class Main {
                         System.out.print("Введите описание подзадачи: ");
                         String subtaskDesc = scanner.nextLine();
                         System.out.print("Введите ID эпика: ");
-                        int epicId = scanner.nextInt();
-                        scanner.nextLine(); // Очистка буфера
-                        manager.createSubtask(subtaskName, subtaskDesc, TaskStatus.NEW, epicId);
+                        int epicId;
+
+                        try {
+                            epicId = scanner.nextInt();
+                            scanner.nextLine(); // Очистка буфера
+                        } catch (InputMismatchException e) {
+                            System.out.println("Пожалуйста, введите корректный ID эпика.");
+                            scanner.nextLine(); // Очистка буфера
+                            continue; // Пропускаем итерацию
+                        }
+
+                        // Ввод продолжительности
+                        System.out.print("Введите продолжительность (в часах): ");
+                        long durationHours = scanner.nextLong();
+                        Duration duration = Duration.ofHours(durationHours);
+
+                        // Ввод времени начала
+                        System.out.print("Введите время начала (в формате ГГГГ-ММ-ДД ЧЧ:ММ): ");
+                        String startTimeInput = scanner.nextLine();
+                        LocalDateTime startTime;
+                        try {
+                            startTime = LocalDateTime.parse(startTimeInput);
+                        } catch (DateTimeParseException e) {
+                            System.out.println("Неверный формат времени. Пожалуйста, используйте формат ГГГГ-ММ-ДД ЧЧ:ММ.");
+                            continue; // Пропускаем итерацию
+                        }
+
+                        manager.createSubtask(subtaskName, subtaskDesc, TaskStatus.NEW, epicId, duration, startTime);
                         System.out.println("Подзадача создана.");
                         break;
                     case 4:
