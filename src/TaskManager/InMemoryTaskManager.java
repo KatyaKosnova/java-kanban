@@ -32,6 +32,14 @@ public class InMemoryTaskManager implements TaskManager {
         return task;
     }
 
+    public Task addTask(Task task) {
+        // Создаем новую задачу с текущим ID и передаем остальные параметры
+        Task newTask = new Task(currentId, task.getName(), task.getDescription(), task.getStatus());
+        tasks.put(currentId, newTask); // Сохраняем новую задачу в мапе
+        currentId++; // Увеличиваем текущий ID для следующей задачи
+        return newTask; // Возвращаем добавленную задачу
+    }
+
     public Subtask createSubtask(String name, String description, TaskStatus status, int epicId) {
         int subtaskId = currentId++;
 
@@ -72,12 +80,12 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task getTask(int id) {
-        Task task = tasks.get(id);
-        if (task != null) {
-            historyManager.add(task);
+    public Task getTask(int id) throws TaskNotFoundException {
+        Task task = tasks.get(id); // Предполагая, что tasks - это Map<Integer, Task>
+        if (task == null) {
+            throw new TaskNotFoundException("Task with id " + id + " not found."); // Если задача не найдена, выбрасываем исключение
         }
-        return task;
+        return task; // Возвращаем найденную задачу
     }
 
     @Override
@@ -134,7 +142,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteTask(int id) {
+    public void deleteTask(int id) throws TaskNotFoundException {
+        Task task = getTask(id); // Предполагаем, что метод getTask выбрасывает TaskNotFoundException
+        // Код для удаления задачи
         tasks.remove(id);
     }
 
@@ -205,5 +215,14 @@ public class InMemoryTaskManager implements TaskManager {
         } else {
             epic.setStatus(TaskStatus.IN_PROGRESS);
         }
+    }
+
+    @Override
+    public void clear() {
+        tasks.clear();
+        subtasks.clear();
+        epics.clear();
+        historyManager.clear(); // Очищаем историю посещений задач
+        currentId = 1;  // Сбрасываем идентификатор
     }
 }

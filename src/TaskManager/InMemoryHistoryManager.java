@@ -1,17 +1,34 @@
 package taskmanager;
 
 import task.Task;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
+    private final List<Task> history = new LinkedList<>();
     private static final int MAX_HISTORY_SIZE = 10;
     private final Map<Integer, Node> nodeMap = new HashMap<>();
     private Node head;
     private Node tail;
+
+    @Override
+    public void clear() {
+        nodeMap.clear();
+        head = null;
+        tail = null;
+    }
+
+    @Override
+    public List<Task> getHistory() {
+        List<Task> history = new ArrayList<>();
+        Node current = head;
+        while (current != null) {
+            history.add(current.getTask()); // Используем геттер для получения задачи
+            current = current.next;
+        }
+        return history;
+    }
 
     @Override
     public void add(Task task) {
@@ -32,18 +49,6 @@ public class InMemoryHistoryManager implements HistoryManager {
 
             removeOldest();
         }
-    }
-
-    @Override
-    public List<Task> getHistory() {
-
-        List<Task> history = new ArrayList<>();
-        Node current = head;
-        while (current != null) {
-            history.add(current.getTask()); // Используем геттер для получения задачи
-            current = current.next;
-        }
-        return history;
     }
 
     @Override
@@ -96,4 +101,6 @@ public class InMemoryHistoryManager implements HistoryManager {
             removeNode(head);
         }
     }
+
+
 }

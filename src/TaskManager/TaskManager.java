@@ -15,7 +15,7 @@ public interface TaskManager {
 
     Epic createEpic(String name, String description, TaskStatus status);
 
-    Task getTask(int id);
+    Task getTask(int id) throws TaskNotFoundException;
 
     Subtask getSubtask(int id);
 
@@ -30,7 +30,7 @@ public interface TaskManager {
 
     void updateEpic(Epic epic);
 
-    void deleteTask(int id);
+    void deleteTask(int id) throws TaskNotFoundException;
 
     void deleteSubtask(int id);
 
@@ -45,4 +45,8 @@ public interface TaskManager {
     List<Subtask> getSubtasksByEpic(int epicId);
 
     List<Task> getHistory();
+
+    void clear();
+
+    Task addTask(Task task);
 }

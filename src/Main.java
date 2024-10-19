@@ -12,10 +12,18 @@ public class Main {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) {
-        try (Scanner scanner = new Scanner(System.in)) {
-            File file = File.createTempFile("taskManager", ".csv");
-            FileBackedTaskManager manager = FileBackedTaskManager.loadFromFile(file);
+        File file = new File("taskManager.csv"); // Используем фиксированное имя файла
+        FileBackedTaskManager manager;
 
+        try {
+            manager = FileBackedTaskManager.loadFromFile(file);
+        } catch (Exception e) {
+            // Если файл не найден, создаем новый экземпляр менеджера
+            manager = new FileBackedTaskManager(file);
+            System.out.println("Файл не найден. Создан новый менеджер задач.");
+        }
+
+        try (Scanner scanner = new Scanner(System.in)) {
             while (true) {
                 System.out.println("Выберите действие:");
                 System.out.println("1. Создать задачу");
@@ -73,7 +81,7 @@ public class Main {
                         }
                         break;
                     case 0:
-                        return;
+                        return; // Выход из программы
                     default:
                         System.out.println("Неверный выбор.");
                 }

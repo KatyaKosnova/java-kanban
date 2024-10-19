@@ -159,9 +159,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public void deleteTask(int id) {
-        super.deleteTask(id);
-        historyManager.remove(id); // Удаляем задачу из истории
-        save();
+        try {
+            super.deleteTask(id);  // Вызов родительского метода
+            historyManager.remove(id); // Удаляем задачу из истории
+            save(); // Сохраняем изменения
+        } catch (TaskNotFoundException e) {
+            // Обработка исключения: можно залогировать или игнорировать
+            System.out.println("Задача не найдена: " + e.getMessage());
+        }
     }
 
     @Override
