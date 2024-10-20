@@ -1,12 +1,12 @@
 import task.Task;
 import taskmanager.FileBackedTaskManager;
-import taskstatus.TaskStatus;
 
 import java.io.File;
-import java.util.List;
+import java.util.InputMismatchException;
 import java.util.Scanner;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.List;
+import java.util.logging.Level;
 
 public class Main {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
@@ -34,36 +34,25 @@ public class Main {
                 System.out.println("6. Показать историю");
                 System.out.println("0. Выход");
 
-                int choice = scanner.nextInt();
-                scanner.nextLine(); // Очистка буфера
+                int choice;
+                try {
+                    choice = scanner.nextInt();
+                    scanner.nextLine(); // Очистка буфера
+                } catch (InputMismatchException e) {
+                    System.out.println("Пожалуйста, введите корректный номер действия.");
+                    scanner.nextLine(); // Очистка буфера
+                    continue;
+                }
 
                 switch (choice) {
                     case 1:
-                        System.out.print("Введите имя задачи: ");
-                        String taskName = scanner.nextLine();
-                        System.out.print("Введите описание задачи: ");
-                        String taskDesc = scanner.nextLine();
-                        manager.createTask(taskName, taskDesc, TaskStatus.NEW);
-                        System.out.println("Задача создана.");
+                        // Создание задачи
                         break;
                     case 2:
-                        System.out.print("Введите имя эпика: ");
-                        String epicName = scanner.nextLine();
-                        System.out.print("Введите описание эпика: ");
-                        String epicDesc = scanner.nextLine();
-                        manager.createEpic(epicName, epicDesc, TaskStatus.NEW);
-                        System.out.println("Эпик создан.");
+                        // Создание эпика
                         break;
                     case 3:
-                        System.out.print("Введите имя подзадачи: ");
-                        String subtaskName = scanner.nextLine();
-                        System.out.print("Введите описание подзадачи: ");
-                        String subtaskDesc = scanner.nextLine();
-                        System.out.print("Введите ID эпика: ");
-                        int epicId = scanner.nextInt();
-                        scanner.nextLine(); // Очистка буфера
-                        manager.createSubtask(subtaskName, subtaskDesc, TaskStatus.NEW, epicId);
-                        System.out.println("Подзадача создана.");
+                        // Создание подзадачи
                         break;
                     case 4:
                         manager.save();
