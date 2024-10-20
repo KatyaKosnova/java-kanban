@@ -5,6 +5,8 @@ import task.Task;
 import task.Epic;
 import task.Subtask;
 import taskstatus.TaskStatus;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,8 +42,9 @@ public class InMemoryTaskManager implements TaskManager {
         return newTask; // Возвращаем добавленную задачу
     }
 
-    public Subtask createSubtask(String name, String description, TaskStatus status, int epicId) {
-        int subtaskId = currentId++;
+    @Override
+    public Subtask createSubtask(String name, String description, TaskStatus status, int epicId, Duration duration, LocalDateTime startTime) {
+        int subtaskId = currentId++; // Генерация ID для новой подзадачи
 
         // Проверяем, существует ли эпик
         Epic epic = getEpic(epicId);
@@ -49,15 +52,10 @@ public class InMemoryTaskManager implements TaskManager {
             throw new IllegalArgumentException("Эпик не найден.");
         }
 
-        // Проверка на добавление подзадачи к самому себе
-        if (epicId == subtaskId) {
-            throw new IllegalArgumentException("Эпик не может быть подзадачей самого себя.");
-        }
-
         // Создаем подзадачу
-        Subtask subtask = new Subtask(subtaskId, name, description, status, epicId);
+        Subtask subtask = new Subtask(subtaskId, name, description, status, epicId, duration, startTime);
 
-        // Обрабатываем InvalidSubtaskException
+        // Добавляем подзадачу в эпик
         try {
             epic.addSubtask(subtask);
         } catch (InvalidSubtaskException e) {
@@ -68,8 +66,9 @@ public class InMemoryTaskManager implements TaskManager {
         // Сохраняем подзадачу в менеджере
         subtasks.put(subtaskId, subtask);
 
-        return subtask;
+        return subtask; // Возвращаем созданную подзадачу
     }
+
 
     @Override
     public Epic createEpic(String name, String description, TaskStatus status) {

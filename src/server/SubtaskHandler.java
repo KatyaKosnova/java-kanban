@@ -7,6 +7,8 @@ import taskmanager.TaskManager;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class SubtaskHandler extends BaseHttpHandler {
     private final TaskManager taskManager;
@@ -28,7 +30,12 @@ public class SubtaskHandler extends BaseHttpHandler {
             case "POST":
                 // Логика создания новой подзадачи
                 Subtask newSubtask = gson.fromJson(new InputStreamReader(exchange.getRequestBody()), Subtask.class);
-                taskManager.createSubtask(newSubtask.getName(), newSubtask.getDescription(), newSubtask.getStatus(), newSubtask.getEpicId());
+
+                // Извлечение дополнительных параметров
+                Duration duration = newSubtask.getDuration(); // Предполагается, что у вас есть этот метод
+                LocalDateTime startTime = newSubtask.getStartTime(); // Предполагается, что у вас есть этот метод
+
+                taskManager.createSubtask(newSubtask.getName(), newSubtask.getDescription(), newSubtask.getStatus(), newSubtask.getEpicId(), duration, startTime);
                 sendText(exchange, "Подзадача создана", 201);
                 break;
             case "DELETE":
@@ -46,4 +53,5 @@ public class SubtaskHandler extends BaseHttpHandler {
                 break;
         }
     }
+
 }

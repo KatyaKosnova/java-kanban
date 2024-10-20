@@ -4,6 +4,9 @@ import task.Task;
 import task.Epic;
 import task.Subtask;
 import taskstatus.TaskStatus;
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 
 import java.util.List;
 
@@ -11,7 +14,7 @@ public interface TaskManager {
 
     Task createTask(String name, String description, TaskStatus status);
 
-    Subtask createSubtask(String name, String description, TaskStatus status, int epicId);
+    Subtask createSubtask(String name, String description, TaskStatus status, int epicId, Duration duration, LocalDateTime startTime);
 
     Epic createEpic(String name, String description, TaskStatus status);
 

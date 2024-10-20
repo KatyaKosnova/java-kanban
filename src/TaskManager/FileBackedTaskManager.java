@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
@@ -73,8 +75,27 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             case "EPIC":
                 return new Epic(id, name, description, status);
             case "SUBTASK":
+                if (fields.length < 8) { // Проверяем, достаточно ли полей для подзадачи
+                    throw new IllegalArgumentException("Недостаточно данных для подзадачи: " + value);
+                }
                 int epicId = Integer.parseInt(fields[5]);
-                return new Subtask(id, name, description, status, epicId);
+
+                Duration duration;
+                LocalDateTime startTime;
+
+                try {
+                    duration = Duration.parse(fields[6]); // Парсинг продолжительности
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("Неверный формат продолжительности для подзадачи: " + fields[6], e);
+                }
+
+                try {
+                    startTime = LocalDateTime.parse(fields[7]); // Парсинг времени начала
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("Неверный формат времени начала для подзадачи: " + fields[7], e);
+                }
+
+                return new Subtask(id, name, description, status, epicId, duration, startTime);
             default:
                 throw new IllegalArgumentException("Неизвестный тип задачи: " + type);
         }
@@ -116,10 +137,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Subtask createSubtask(String name, String description, TaskStatus status, int epicId) {
-        Subtask subtask = super.createSubtask(name, description, status, epicId);
+    public Subtask createSubtask(String name, String description, TaskStatus status, int epicId, Duration duration, LocalDateTime startTime) {
+        // Создаем подзадачу с параметрами duration и startTime
+        Subtask subtask = super.createSubtask(name, description, status, epicId, duration, startTime);
         historyManager.add(subtask); // Добавляем подзадачу в историю
-        save();
+        save(); // Сохраняем изменения
         return subtask;
     }
 

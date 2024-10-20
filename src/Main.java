@@ -1,11 +1,15 @@
 import task.Task;
 import taskmanager.FileBackedTaskManager;
+import taskstatus.TaskStatus;
 
 import java.io.File;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Logger;
-import java.util.List;
 import java.util.logging.Level;
 
 public class Main {
@@ -47,12 +51,49 @@ public class Main {
                 switch (choice) {
                     case 1:
                         // Создание задачи
+                        System.out.println("Создание задачи...");
                         break;
                     case 2:
                         // Создание эпика
+                        System.out.println("Создание эпика...");
                         break;
                     case 3:
                         // Создание подзадачи
+                        System.out.print("Введите имя подзадачи: ");
+                        String subtaskName = scanner.nextLine();
+                        System.out.print("Введите описание подзадачи: ");
+                        String subtaskDesc = scanner.nextLine();
+                        System.out.print("Введите ID эпика: ");
+                        int epicId;
+
+                        try {
+                            epicId = scanner.nextInt();
+                            scanner.nextLine(); // Очистка буфера
+                        } catch (InputMismatchException e) {
+                            System.out.println("Пожалуйста, введите корректный ID эпика.");
+                            scanner.nextLine(); // Очистка буфера
+                            continue; // Пропускаем итерацию
+                        }
+
+                        // Ввод продолжительности
+                        System.out.print("Введите продолжительность (в часах): ");
+                        long durationHours = scanner.nextLong();
+                        scanner.nextLine(); // Очистка буфера
+                        Duration duration = Duration.ofHours(durationHours);
+
+                        // Ввод времени начала
+                        System.out.print("Введите время начала (в формате ГГГГ-ММ-ДД ЧЧ:ММ): ");
+                        String startTimeInput = scanner.nextLine();
+                        LocalDateTime startTime;
+                        try {
+                            startTime = LocalDateTime.parse(startTimeInput);
+                        } catch (DateTimeParseException e) {
+                            System.out.println("Неверный формат времени. Пожалуйста, используйте формат ГГГГ-ММ-ДД ЧЧ:ММ.");
+                            continue; // Пропускаем итерацию
+                        }
+
+                        // Добавление подзадачи
+                        manager.createSubtask(subtaskName, subtaskDesc, TaskStatus.NEW, epicId, duration, startTime);                        System.out.println("Подзадача создана.");
                         break;
                     case 4:
                         manager.save();
