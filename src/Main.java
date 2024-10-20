@@ -93,7 +93,8 @@ public class Main {
                         }
 
                         // Добавление подзадачи
-                        manager.createSubtask(subtaskName, subtaskDesc, TaskStatus.NEW, epicId, duration, startTime);                        System.out.println("Подзадача создана.");
+                        manager.createSubtask(subtaskName, subtaskDesc, TaskStatus.NEW, epicId, duration, startTime);
+                        System.out.println("Подзадача создана.");
                         break;
                     case 4:
                         manager.save();
