@@ -67,11 +67,19 @@ public class Task {
     }
 
     public Duration getDuration() {
-        return null;
+        return duration;
     }
 
     public LocalDateTime getStartTime() {
         return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
     }
 }
 

@@ -237,7 +237,6 @@ public class InMemoryTaskManager implements TaskManager {
         currentId = 1;  // Сбрасываем идентификатор
     }
 
-    // Проверка пересечений по времени
     public boolean checkIntersection(Task task1, Task task2) {
         LocalDateTime start1 = task1.getStartTime();
         LocalDateTime end1 = start1.plus(task1.getDuration());
