@@ -78,7 +78,7 @@ public class HttpTaskServer {
                     handleDeleteRequest(exchange);
                     break;
                 default:
-                    exchange.sendResponseHeaders(405, -1); // Метод не разрешен
+                    sendResponse(exchange, 405, "Метод не разрешен"); // Метод не разрешен
             }
         }
 
@@ -89,23 +89,16 @@ public class HttpTaskServer {
 
             if (task != null) {
                 taskManager.addTask(task);
-                String response = "Задача добавлена";
-                exchange.sendResponseHeaders(201, response.length());
-                try (OutputStream os = exchange.getResponseBody()) {
-                    os.write(response.getBytes(StandardCharsets.UTF_8));
-                }
+                sendResponse(exchange, 201, "Задача добавлена");
             } else {
-                exchange.sendResponseHeaders(400, -1); // Неверные данные
+                sendResponse(exchange, 400, "Неверные данные");
             }
         }
 
         // Метод для обработки GET-запросов на получение всех задач
         private void handleGetRequest(HttpExchange exchange) throws IOException {
             String allTasksJson = gson.toJson(taskManager.getAllTasks());
-            exchange.sendResponseHeaders(200, allTasksJson.getBytes(StandardCharsets.UTF_8).length);
-            try (OutputStream os = exchange.getResponseBody()) {
-                os.write(allTasksJson.getBytes(StandardCharsets.UTF_8));
-            }
+            sendResponse(exchange, 200, allTasksJson);
         }
 
         // Метод для обработки DELETE-запросов на удаление задачи по идентификатору
@@ -116,18 +109,22 @@ public class HttpTaskServer {
                 try {
                     int id = Integer.parseInt(idString);
                     taskManager.deleteTask(id);
-                    String response = "Задача удалена";
-                    exchange.sendResponseHeaders(200, response.length());
-                    try (OutputStream os = exchange.getResponseBody()) {
-                        os.write(response.getBytes(StandardCharsets.UTF_8));
-                    }
+                    sendResponse(exchange, 200, "Задача удалена");
                 } catch (NumberFormatException e) {
-                    exchange.sendResponseHeaders(400, -1); // Неверный идентификатор
+                    sendResponse(exchange, 400, "Неверный идентификатор"); // Неверный идентификатор
                 } catch (TaskNotFoundException e) {
-                    exchange.sendResponseHeaders(404, -1); // Задача не найдена
+                    sendResponse(exchange, 404, "Задача не найдена"); // Задача не найдена
                 }
             } else {
-                exchange.sendResponseHeaders(400, -1); // Неверный запрос
+                sendResponse(exchange, 400, "Неверный запрос"); // Неверный запрос
+            }
+        }
+
+        // Метод для отправки ответа клиенту
+        private void sendResponse(HttpExchange exchange, int statusCode, String response) throws IOException {
+            exchange.sendResponseHeaders(statusCode, response.length());
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(response.getBytes(StandardCharsets.UTF_8));
             }
         }
     }

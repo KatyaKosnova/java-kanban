@@ -18,31 +18,35 @@ public class Main {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) {
-        // Создаем экземпляр вашего менеджера задач
+        // Создаем экземпляр FileBackedTaskManager с файлом
         File file = new File("taskManager.csv");
         FileBackedTaskManager manager;
 
         try {
+            // Попытка загрузить менеджер из файла
             manager = FileBackedTaskManager.loadFromFile(file);
         } catch (Exception e) {
+            // Если файл не найден, создается новый менеджер
             manager = new FileBackedTaskManager(file);
             System.out.println("Файл не найден. Создан новый менеджер задач.");
             logger.log(Level.WARNING, "Файл не найден, создан новый менеджер задач.", e);
         }
 
-        // Создаем экземпляр вашего сервера
+        // Создаем и запускаем сервер
         HttpTaskServer server;
         try {
             server = new HttpTaskServer(manager); // Передаем менеджер задач
-            server.start(); // Запускаем сервер
+            server.start(); // Запуск сервера
             System.out.println("Сервер запущен на порту: 8085");
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Ошибка при запуске сервера", e);
-            return; // Завершаем программу, если сервер не удалось запустить
+            return; // Завершаем программу, если сервер не запустился
         }
 
+        // Основной цикл программы
         try (Scanner scanner = new Scanner(System.in)) {
             while (true) {
+                // Меню
                 System.out.println("Выберите действие:");
                 System.out.println("1. Создать задачу");
                 System.out.println("2. Создать эпик");
@@ -65,85 +69,23 @@ public class Main {
                 switch (choice) {
                     case 1:
                         System.out.println("Создание задачи...");
-                        // Реализация создания задачи
+                        // Добавить логику создания задачи
                         break;
                     case 2:
                         System.out.println("Создание эпика...");
-                        // Реализация создания эпика
+                        // Добавить логику создания эпика
                         break;
                     case 3:
-                        System.out.print("Введите имя подзадачи: ");
-                        String subtaskName = scanner.nextLine();
-                        System.out.print("Введите описание подзадачи: ");
-                        String subtaskDesc = scanner.nextLine();
-                        System.out.print("Введите ID эпика: ");
-                        int epicId;
-
-                        try {
-                            epicId = scanner.nextInt();
-                            scanner.nextLine(); // Очистка буфера
-                        } catch (InputMismatchException e) {
-                            System.out.println("Пожалуйста, введите корректный ID эпика.");
-                            scanner.nextLine(); // Очистка буфера
-                            continue;
-                        }
-
-                        // Ввод продолжительности
-                        System.out.print("Введите продолжительность (в часах): ");
-                        long durationHours;
-                        try {
-                            durationHours = scanner.nextLong();
-                            if (durationHours < 0) {
-                                throw new IllegalArgumentException("Продолжительность не может быть отрицательной.");
-                            }
-                            scanner.nextLine(); // Очистка буфера
-                        } catch (InputMismatchException | IllegalArgumentException e) {
-                            System.out.println("Пожалуйста, введите корректную продолжительность.");
-                            scanner.nextLine(); // Очистка буфера
-                            continue;
-                        }
-
-                        Duration duration = Duration.ofHours(durationHours);
-
-                        // Ввод времени начала
-                        System.out.print("Введите время начала (в формате ГГГГ-ММ-ДД ЧЧ:ММ): ");
-                        String startTimeInput = scanner.nextLine();
-                        LocalDateTime startTime;
-                        try {
-                            startTime = LocalDateTime.parse(startTimeInput);
-                        } catch (DateTimeParseException e) {
-                            System.out.println("Неверный формат времени. Пожалуйста, используйте формат ГГГГ-ММ-ДД ЧЧ:ММ.");
-                            continue;
-                        }
-
-                        // Добавление подзадачи
-                        manager.createSubtask(subtaskName, subtaskDesc, TaskStatus.NEW, epicId, duration, startTime);
-                        System.out.println("Подзадача создана.");
+                        createSubtask(scanner, manager);
                         break;
                     case 4:
-                        try {
-                            manager.save();
-                            System.out.println("Задачи сохранены в файл.");
-                        } catch (Exception e) {
-                            System.out.println("Ошибка при сохранении задач в файл: " + e.getMessage());
-                            logger.log(Level.SEVERE, "Ошибка при сохранении задач в файл.", e);
-                        }
+                        saveTasks(manager);
                         break;
                     case 5:
-                        try {
-                            manager = FileBackedTaskManager.loadFromFile(file);
-                            System.out.println("Задачи загружены из файла.");
-                        } catch (Exception e) {
-                            System.out.println("Ошибка при загрузке задач из файла: " + e.getMessage());
-                            logger.log(Level.SEVERE, "Ошибка при загрузке задач из файла.", e);
-                        }
+                        loadTasks(manager, file);
                         break;
                     case 6:
-                        List<Task> history = manager.getHistory();
-                        System.out.println("История задач:");
-                        for (Task task : history) {
-                            System.out.println(task.getId() + " " + task.getName() + " - " + task.getStatus());
-                        }
+                        showHistory(manager);
                         break;
                     case 0:
                         System.out.println("Выход из программы...");
@@ -154,6 +96,88 @@ public class Main {
             }
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Произошла ошибка", e);
+        }
+    }
+
+    // Метод для создания подзадачи
+    private static void createSubtask(Scanner scanner, FileBackedTaskManager manager) {
+        System.out.print("Введите имя подзадачи: ");
+        String subtaskName = scanner.nextLine();
+        System.out.print("Введите описание подзадачи: ");
+        String subtaskDesc = scanner.nextLine();
+        System.out.print("Введите ID эпика: ");
+        int epicId;
+
+        try {
+            epicId = scanner.nextInt();
+            scanner.nextLine(); // Очистка буфера
+        } catch (InputMismatchException e) {
+            System.out.println("Пожалуйста, введите корректный ID эпика.");
+            scanner.nextLine(); // Очистка буфера
+            return;
+        }
+
+        // Ввод продолжительности
+        System.out.print("Введите продолжительность (в часах): ");
+        long durationHours;
+        try {
+            durationHours = scanner.nextLong();
+            if (durationHours < 0) {
+                throw new IllegalArgumentException("Продолжительность не может быть отрицательной.");
+            }
+            scanner.nextLine(); // Очистка буфера
+        } catch (InputMismatchException | IllegalArgumentException e) {
+            System.out.println("Пожалуйста, введите корректную продолжительность.");
+            scanner.nextLine(); // Очистка буфера
+            return;
+        }
+
+        Duration duration = Duration.ofHours(durationHours);
+
+        // Ввод времени начала
+        System.out.print("Введите время начала (в формате ГГГГ-ММ-ДД ЧЧ:ММ): ");
+        String startTimeInput = scanner.nextLine();
+        LocalDateTime startTime;
+        try {
+            startTime = LocalDateTime.parse(startTimeInput);
+        } catch (DateTimeParseException e) {
+            System.out.println("Неверный формат времени. Пожалуйста, используйте формат ГГГГ-ММ-ДД ЧЧ:ММ.");
+            return;
+        }
+
+        // Добавление подзадачи
+        manager.createSubtask(subtaskName, subtaskDesc, TaskStatus.NEW, epicId, duration, startTime);
+        System.out.println("Подзадача создана.");
+    }
+
+    // Метод для сохранения задач в файл
+    private static void saveTasks(FileBackedTaskManager manager) {
+        try {
+            manager.save();
+            System.out.println("Задачи сохранены в файл.");
+        } catch (Exception e) {
+            System.out.println("Ошибка при сохранении задач в файл: " + e.getMessage());
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Ошибка при сохранении задач в файл.", e);
+        }
+    }
+
+    // Метод для загрузки задач из файла
+    private static void loadTasks(FileBackedTaskManager manager, File file) {
+        try {
+            manager = FileBackedTaskManager.loadFromFile(file);
+            System.out.println("Задачи загружены из файла.");
+        } catch (Exception e) {
+            System.out.println("Ошибка при загрузке задач из файла: " + e.getMessage());
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Ошибка при загрузке задач из файла.", e);
+        }
+    }
+
+    // Метод для отображения истории задач
+    private static void showHistory(FileBackedTaskManager manager) {
+        List<Task> history = manager.getHistory();
+        System.out.println("История задач:");
+        for (Task task : history) {
+            System.out.println(task.getId() + " " + task.getName() + " - " + task.getStatus());
         }
     }
 }
