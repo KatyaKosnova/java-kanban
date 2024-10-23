@@ -42,13 +42,21 @@ public class HttpTaskManagerTasksTest {
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type", "application/json");
 
+            // Отправка запроса
             try (var writer = new java.io.OutputStreamWriter(connection.getOutputStream())) {
                 writer.write(taskJson);
                 writer.flush();
             }
 
+            // Получение кода ответа
             int responseCode = connection.getResponseCode();
             assertEquals(201, responseCode, "Код ответа не соответствует ожидаемому");
+
+            // Проверка тела ответа
+            try (var reader = new java.io.BufferedReader(new java.io.InputStreamReader(connection.getInputStream()))) {
+                String response = reader.lines().collect(java.util.stream.Collectors.joining("\n"));
+                assertEquals("Задача добавлена", response, "Тело ответа не соответствует ожидаемому");
+            }
 
         } catch (IOException e) {
             e.printStackTrace(); // Вывод стека ошибки
