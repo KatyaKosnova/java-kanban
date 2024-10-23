@@ -1,7 +1,10 @@
 package task;
 
 import taskstatus.TaskStatus;
+
+import java.time.LocalDateTime;
 import java.util.Objects;
+import java.time.Duration;
 
 public class Task {
 
@@ -9,6 +12,8 @@ public class Task {
     protected String name; // Изменено на protected
     protected String description; // Изменено на protected
     protected TaskStatus status; // Изменено на protected
+    protected LocalDateTime startTime;
+    protected Duration duration;
 
     public Task(int id, String name, String description, TaskStatus status) {
         this.id = id;
@@ -57,7 +62,16 @@ public class Task {
 
     @Override
     public String toString() {
-        return String.format("Task{id=%d, name='%s', description='%s', status=%s}", id, name, description, status);
+        return String.format("Task{id=%d, name='%s', description='%s', status=%s, duration=%s, startTime=%s}",
+                id, name, description, status, duration, startTime);
+    }
+
+    public Duration getDuration() {
+        return null;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
     }
 }
 
