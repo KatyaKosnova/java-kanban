@@ -22,26 +22,35 @@ public class EpicHandler extends BaseHttpHandler {
         try {
             switch (exchange.getRequestMethod()) {
                 case "GET":
-                    // Логика получения всех эпиков
+                    // Получение всех эпиков
                     String epicsJson = gson.toJson(taskManager.getAllEpics());
                     sendJson(exchange, epicsJson, 200);
                     break;
+
                 case "POST":
-                    // Логика создания нового эпика
+                    // Создание нового эпика
                     Epic newEpic = gson.fromJson(new InputStreamReader(exchange.getRequestBody()), Epic.class);
+                    if (newEpic.getName() == null || newEpic.getDescription() == null) {
+                        sendText(exchange, "Имя и описание обязательны", 400);
+                        return;
+                    }
                     taskManager.createEpic(newEpic.getName(), newEpic.getDescription(), newEpic.getStatus());
                     sendText(exchange, "Эпик создан", 201);
                     break;
+
                 case "DELETE":
-                    // Логика удаления эпика
+                    // Удаление эпика
                     int epicId = Integer.parseInt(exchange.getRequestURI().getPath().split("/")[2]);
                     taskManager.deleteEpic(epicId);
-                    sendText(exchange, "Эпик удален", 200);
+                    sendText(exchange, "Эпик удален", 204); // 204 No Content
                     break;
+
                 default:
                     sendNotFound(exchange);
                     break;
             }
+        } catch (NumberFormatException e) {
+            sendText(exchange, "Некорректный идентификатор эпика", 400);
         } catch (Exception e) {
             handleError(exchange, e);
         }
