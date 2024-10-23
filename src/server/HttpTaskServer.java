@@ -58,20 +58,28 @@ public class HttpTaskServer {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            if ("POST".equals(exchange.getRequestMethod())) {
-                // Обработка запроса на добавление задачи
-                InputStream inputStream = exchange.getRequestBody();
-                Task task = gson.fromJson(new InputStreamReader(inputStream), Task.class);
-
-                taskManager.addTask(task);
-
-                String response = "Задача добавлена";
-                exchange.sendResponseHeaders(201, response.length());
-                try (OutputStream os = exchange.getResponseBody()) {
-                    os.write(response.getBytes());
-                }
-            } else {
-                exchange.sendResponseHeaders(405, -1); // Метод не разрешен
+            switch (exchange.getRequestMethod()) {
+                case "POST":
+                    InputStream inputStream = exchange.getRequestBody();
+                    Task task = gson.fromJson(new InputStreamReader(inputStream), Task.class);
+                    taskManager.addTask(task);
+                    String response = "Задача добавлена";
+                    exchange.sendResponseHeaders(201, response.length());
+                    try (OutputStream os = exchange.getResponseBody()) {
+                        os.write(response.getBytes());
+                    }
+                    break;
+                case "GET":
+                    // Пример обработки GET запроса
+                    // Получить все задачи и вернуть их
+                    String allTasksJson = gson.toJson(taskManager.getAllTasks());
+                    exchange.sendResponseHeaders(200, allTasksJson.length());
+                    try (OutputStream os = exchange.getResponseBody()) {
+                        os.write(allTasksJson.getBytes());
+                    }
+                    break;
+                default:
+                    exchange.sendResponseHeaders(405, -1); // Метод не разрешен
             }
         }
     }

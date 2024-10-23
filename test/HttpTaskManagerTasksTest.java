@@ -23,14 +23,13 @@ public class HttpTaskManagerTasksTest {
             }
         }).start();
 
-
+        // Подождите, пока сервер запустится (можно улучшить)
         try {
-            Thread.sleep(2000);
+            Thread.sleep(2000); // Либо используйте другой подход для проверки состояния сервера
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            Thread.currentThread().interrupt(); // Восстановите состояние прерывания
         }
     }
-
 
     @Test
     public void testAddTask() {
@@ -53,7 +52,7 @@ public class HttpTaskManagerTasksTest {
 
         } catch (IOException e) {
             e.printStackTrace(); // Вывод стека ошибки
-            fail ("Ошибка при выполнении запроса: " + e.getMessage());
+            fail("Ошибка при выполнении запроса: " + e.getMessage());
         }
     }
 }
