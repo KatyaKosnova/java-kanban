@@ -51,5 +51,5 @@ public interface TaskManager {
 
     void clear();
 
-    Task addTask(Task task);
+    void addTask(Task task);
 }
