@@ -56,5 +56,4 @@ public class HttpTaskManagerTasksTest {
         assertEquals("[]", responseBody, "Список задач должен быть пустым при начальной инициализации");
     }
 
-    // Добавьте тесты для других эндпоинтов (например, /tasks/epic, /tasks/subtask и т.д.)
 }
