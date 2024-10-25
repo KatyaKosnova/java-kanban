@@ -1,9 +1,10 @@
-package taskmanager;
+package test;
 
 import org.junit.jupiter.api.AfterEach;
 import task.Task;
 import task.Epic;
 import task.Subtask;
+import taskmanager.*;
 import taskstatus.TaskStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

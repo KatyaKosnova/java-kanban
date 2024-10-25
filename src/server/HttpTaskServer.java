@@ -1,9 +1,8 @@
 package server;
 
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpServer;
-import taskmanager.TaskManager;
 import taskmanager.InMemoryTaskManager;
+import taskmanager.TaskManager;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -11,23 +10,21 @@ import java.net.InetSocketAddress;
 public class HttpTaskServer {
     private static final int PORT = 8085;
     private final HttpServer httpServer;
-    private final Gson gson;
     private final TaskManager taskManager;
 
     public HttpTaskServer(TaskManager taskManager) throws IOException {
         this.taskManager = taskManager;
-        this.gson = new Gson();
         this.httpServer = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
         initContexts();
     }
 
     private void initContexts() {
-        // Регистрация обработчиков для разных эндпоинтов
-        httpServer.createContext("/tasks", new TaskHandler(taskManager, gson));
-        httpServer.createContext("/tasks/epic", new EpicHandler(taskManager, gson));
-        httpServer.createContext("/tasks/subtask", new SubtaskHandler(taskManager, gson));
-        httpServer.createContext("/tasks/prioritized", new PrioritizedTaskHandler(taskManager, gson));
-        httpServer.createContext("/tasks/history", new HistoryHandler(taskManager, gson));
+        // Регистрация обработчиков для разных эндпоинтов, передаем JsonUtils.GSON
+        httpServer.createContext("/tasks", new TaskHandler(taskManager, JsonUtils.GSON));
+        httpServer.createContext("/tasks/epic", new EpicHandler(taskManager, JsonUtils.GSON));
+        httpServer.createContext("/tasks/subtask", new SubtaskHandler(taskManager, JsonUtils.GSON));
+        httpServer.createContext("/tasks/prioritized", new PrioritizedTaskHandler(taskManager, JsonUtils.GSON));
+        httpServer.createContext("/tasks/history", new HistoryHandler(taskManager, JsonUtils.GSON));
     }
 
     public void start() {
@@ -42,7 +39,7 @@ public class HttpTaskServer {
 
     public static void main(String[] args) {
         try {
-            TaskManager taskManager = new InMemoryTaskManager(); // Инициализация менеджера задач
+            TaskManager taskManager = new InMemoryTaskManager();
             HttpTaskServer httpTaskServer = new HttpTaskServer(taskManager);
             httpTaskServer.start();
         } catch (IOException e) {
