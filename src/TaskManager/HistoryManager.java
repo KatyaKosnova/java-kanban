@@ -9,5 +9,8 @@ public interface HistoryManager {
 
     void remove(int id);          // Удаление задачи по ID
 
-    List<Task> getHistory();      // Получение истории просмотров
+    List<Task> getHistory();
+
+    void clear(); // Метод для очистки истории
+    // Метод для получения истории задач// Получение истории просмотров
 }

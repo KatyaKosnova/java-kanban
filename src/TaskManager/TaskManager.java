@@ -5,8 +5,9 @@ import task.Epic;
 import task.Subtask;
 import taskstatus.TaskStatus;
 import java.time.Duration;
-
 import java.time.LocalDateTime;
+
+
 import java.util.List;
 
 public interface TaskManager {
@@ -17,7 +18,7 @@ public interface TaskManager {
 
     Epic createEpic(String name, String description, TaskStatus status);
 
-    Task getTask(int id);
+    Task getTask(int id) throws TaskNotFoundException;
 
     Subtask getSubtask(int id);
 
@@ -26,15 +27,13 @@ public interface TaskManager {
     // Новый метод для получения эпика по ID
     Epic getEpicById(int id);
 
-    void addTask(Task task);
-
     void updateTask(Task task);
 
     void updateSubtask(Subtask subtask) throws TaskNotFoundException;
 
     void updateEpic(Epic epic);
 
-    void deleteTask(int id);
+    void deleteTask(int id) throws TaskNotFoundException;
 
     void deleteSubtask(int id);
 
@@ -50,8 +49,9 @@ public interface TaskManager {
 
     List<Task> getHistory();
 
-    List<Task> getPrioritizedTasks();
+    void clear();
+
+    void addTask(Task task);
 
     void updateEpicStatus(int epicId);
-
 }

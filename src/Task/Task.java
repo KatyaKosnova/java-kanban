@@ -2,9 +2,9 @@ package task;
 
 import taskstatus.TaskStatus;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.time.Duration;
 
 public class Task {
 
@@ -34,6 +34,10 @@ public class Task {
         return description;
     }
 
+    public TaskStatus getStatus() {
+        return status;
+    }
+
     public void setStatus(TaskStatus status) {
         this.status = status;
     }
@@ -58,16 +62,16 @@ public class Task {
 
     @Override
     public String toString() {
-        return String.format("Task{id=%d, name='%s', description='%s', status=%s}",
-                id, name, description, status);
-    }
-
-    public LocalDateTime getStartTime() {
-        return startTime;
+        return String.format("Task{id=%d, name='%s', description='%s', status=%s, duration=%s, startTime=%s}",
+                id, name, description, status, duration, startTime);
     }
 
     public Duration getDuration() {
         return duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
     }
 
     public void setStartTime(LocalDateTime startTime) {
@@ -77,8 +81,5 @@ public class Task {
     public void setDuration(Duration duration) {
         this.duration = duration;
     }
-
-    public TaskStatus getStatus() {
-        return status; // Возвращаем статус задачи
-    }
 }
+

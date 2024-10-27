@@ -7,18 +7,17 @@ import java.util.Objects;
 
 public class Subtask extends Task {
 
-    public int epicId; // Идентификатор эпика, к которому принадлежит подзадача
-    public Duration duration; // Продолжительность подзадачи
-    public LocalDateTime startTime; // Время начала выполнения подзадачи
-    public LocalDateTime endTime; // Время окончания подзадачи
+    private int epicId; // Идентификатор эпика, к которому принадлежит подзадача
+    private Duration duration; // Поле для длительности подзадачи
+    private LocalDateTime startTime; // Поле для времени начала подзадачи
+    private LocalDateTime endTime; // Время окончания подзадачи
 
-    // Конструктор класса Subtask
     public Subtask(int id, String name, String description, TaskStatus status, int epicId,
                    Duration duration, LocalDateTime startTime) {
         super(id, name, description, status);
         this.epicId = epicId;
-        this.duration = duration;
-        this.startTime = startTime;
+        this.duration = duration; // Инициализация длительности
+        this.startTime = startTime; // Инициализация времени начала
         this.endTime = calculateEndTime(); // Вычисляем время окончания
     }
 
@@ -30,8 +29,18 @@ public class Subtask extends Task {
         return duration;
     }
 
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+        this.endTime = calculateEndTime(); // Обновляем время окончания
+    }
+
     public LocalDateTime getStartTime() {
         return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+        this.endTime = calculateEndTime(); // Обновляем время окончания
     }
 
     public LocalDateTime getEndTime() {

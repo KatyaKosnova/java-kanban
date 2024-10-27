@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
-import taskmanager.FileBackedTaskManager;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -49,18 +48,22 @@ abstract class TaskManagerTest<T extends TaskManager> {
         // Добавление задачи в менеджер
         taskManager.updateTask(task);
 
-        // Получение задачи из менеджера
-        final Task savedTask = taskManager.getTask(taskId);
+        try {
+            // Получение задачи из менеджера
+            final Task savedTask = taskManager.getTask(taskId);
 
-        assertNotNull(savedTask, "Задача не найдена.");
-        assertEquals(task, savedTask, "Задачи не совпадают.");
+            assertNotNull(savedTask, "Задача не найдена.");
+            assertEquals(task, savedTask, "Задачи не совпадают.");
 
-        // Получение всех задач
-        final List<Task> tasks = taskManager.getAllTasks();
+            // Получение всех задач
+            final List<Task> tasks = taskManager.getAllTasks();
 
-        assertNotNull(tasks, "Задачи не возвращаются.");
-        assertEquals(1, tasks.size(), "Неверное количество задач.");
-        assertEquals(task, tasks.get(0), "Задачи не совпадают.");
+            assertNotNull(tasks, "Задачи не возвращаются.");
+            assertEquals(1, tasks.size(), "Неверное количество задач.");
+            assertEquals(task, tasks.get(0), "Задачи не совпадают.");
+        } catch (TaskNotFoundException e) {
+            fail("Исключение TaskNotFoundException было выброшено: " + e.getMessage());
+        }
     }
 
     @Test
@@ -128,12 +131,16 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         Task task = taskManager.createTask("Task", "Description", TaskStatus.NEW);
         int id = task.getId();
 
-        taskManager.updateTask(task); // Update the task
+        taskManager.updateTask(task); // Обновление задачи
 
-        Task retrievedTask = taskManager.getTask(id);
-        assertEquals("Task", retrievedTask.getName(), "Имя задачи не должно меняться.");
-        assertEquals("Description", retrievedTask.getDescription(), "Описание задачи не должно меняться.");
-        assertEquals(TaskStatus.NEW, retrievedTask.getStatus(), "Статус задачи не должен меняться.");
+        try {
+            Task retrievedTask = taskManager.getTask(id);
+            assertEquals("Task", retrievedTask.getName(), "Имя задачи не должно меняться.");
+            assertEquals("Description", retrievedTask.getDescription(), "Описание задачи не должно меняться.");
+            assertEquals(TaskStatus.NEW, retrievedTask.getStatus(), "Статус задачи не должен меняться.");
+        } catch (TaskNotFoundException e) {
+            fail("Задача не найдена: " + e.getMessage());
+        }
     }
 
     @Test
@@ -190,12 +197,16 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
         taskManager.save();
         assertTrue(file.length() > 0, "Файл должен быть не пустым после сохранения");
 
-        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(file);
-        Task loadedTask = loadedManager.getTask(task.getId());
-        assertNotNull(loadedTask);
-        assertEquals(task.getName(), loadedTask.getName());
-        assertEquals(task.getDescription(), loadedTask.getDescription());
-        assertEquals(task.getStatus(), loadedTask.getStatus());
+        try {
+            FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(file);
+            Task loadedTask = loadedManager.getTask(task.getId());
+            assertNotNull(loadedTask);
+            assertEquals(task.getName(), loadedTask.getName());
+            assertEquals(task.getDescription(), loadedTask.getDescription());
+            assertEquals(task.getStatus(), loadedTask.getStatus());
+        } catch (TaskNotFoundException e) {
+            fail("Задача не найдена: " + e.getMessage());
+        }
     }
 
     @Test

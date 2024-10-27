@@ -25,6 +25,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         this.historyManager = Managers.getDefaultHistory();
     }
 
+    @Override
+    public void addTask(Task task) {
+        super.addTask(task); // Вызов родительского метода
+        save(); // Сохраняем изменения
+    }
+
     // Метод для автосохранения в файл
     public void save() {
         try (FileWriter writer = new FileWriter(file)) {
@@ -73,9 +79,26 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             case "EPIC":
                 return new Epic(id, name, description, status);
             case "SUBTASK":
+                if (fields.length < 8) { // Проверяем, достаточно ли полей для подзадачи
+                    throw new IllegalArgumentException("Недостаточно данных для подзадачи: " + value);
+                }
                 int epicId = Integer.parseInt(fields[5]);
-                Duration duration = Duration.parse(fields[6]); // Проверка на null
-                LocalDateTime startTime = LocalDateTime.parse(fields[7]); // Проверка на null
+
+                Duration duration;
+                LocalDateTime startTime;
+
+                try {
+                    duration = Duration.parse(fields[6]); // Парсинг продолжительности
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("Неверный формат продолжительности для подзадачи: " + fields[6], e);
+                }
+
+                try {
+                    startTime = LocalDateTime.parse(fields[7]); // Парсинг времени начала
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("Неверный формат времени начала для подзадачи: " + fields[7], e);
+                }
+
                 return new Subtask(id, name, description, status, epicId, duration, startTime);
             default:
                 throw new IllegalArgumentException("Неизвестный тип задачи: " + type);
@@ -118,9 +141,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public Subtask createSubtask(String name, String description, TaskStatus status, int epicId, Duration duration, LocalDateTime startTime) {
         Subtask subtask = super.createSubtask(name, description, status, epicId, duration, startTime);
         if (subtask != null) {
-            historyManager.add(subtask);
+            historyManager.add(subtask); // Добавляем подзадачу в историю
+            save(); // Сохраняем изменения
         }
-        save();
         return subtask;
     }
 
@@ -155,9 +178,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public void deleteTask(int id) {
-        super.deleteTask(id);
-        historyManager.remove(id);
-        save();
+        try {
+            super.deleteTask(id);  // Вызов родительского метода
+            historyManager.remove(id); // Удаляем задачу из истории
+            save(); // Сохраняем изменения
+        } catch (TaskNotFoundException e) {
+            System.out.println("Задача не найдена: " + e.getMessage());
+        }
     }
 
     @Override
